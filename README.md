@@ -1,10 +1,10 @@
 # Batta Marketplace API
 
-Batta Marketplace API is the backend service that handles users, products, carts, and orders for the Batta Marketplace platform. It is built to provide secure and reliable endpoints for client applications.
+Batta Marketplace API is the backend service that handles users, products, carts, and orders for the Batta Marketplace e-commerce platform. It is built to provide secure, role-based and reliable API endpoints for client applications and is designed for production-ready deployment.
 
 ## 🚀 Project Overview
 
-This project was developed as part of an academic graded assessment to demonstrate backend development, RESTful API design, database integration, and production deployment in an e-commerce environment using Node.js, Express, TypeScript, MongoDB, Mongoose, and Render.
+This project was developed as part of an academic graded assessment to demonstrate backend development, RESTful API design, and database integration for an e-commerce application using Node.js, Express, TypeScript, MongoDB, and Mongoose.
 
 The API handles:
 
@@ -57,7 +57,7 @@ The API handles:
 
 ### Hosting & Deployment
 
-- Render (cloud application hosting)
+- Cloud application hosting (can be deployed on any platform such as Render, Heroku, or Vercel)
 
 ## 📂 Project Structure
 
@@ -218,7 +218,7 @@ npm start
 
 ### 📌 API Base URL
 
-`http://localhost:5000/api`
+[`http://localhost:5000/api`](http://localhost:5000/api)
 
 ## 🎯 Learning Objectives
 
