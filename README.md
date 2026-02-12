@@ -169,7 +169,6 @@ npm install
 Create a `.env` file in the root directory and add the following:
 
 ```env
-PORT=5000
 MONGODB_URI=<your-atlas-connection-string>
 JWT_SECRET=<your-secret-key>
 JWT_EXPIRES_IN=1h
@@ -188,7 +187,10 @@ CLOUDINARY_API_SECRET=<your-cloudinary-api-secret>
 {
   "watch": ["src"],
   "ext": "ts",
-  "exec": "node --loader ts-node/esm src/server.ts"
+  "exec": "node --loader ts-node/esm src/server.ts",
+  "env": {
+    "NODE_ENV": "development"
+  }
 }
 ```
 
@@ -199,7 +201,7 @@ CLOUDINARY_API_SECRET=<your-cloudinary-api-secret>
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "npm run build && node dist/index.js"
+    "start": "npm run build && node dist/server.js"
   }
 }
 ```
@@ -248,7 +250,7 @@ Potential enhancements for this project include:
 
 ## 👨‍💻 Author
 
-Developed by **Emem Peace**  
+Developed by **Emem Eduoku**  
 Node.js Backend Developer
 
-📧 Contact: [peace@gmail.com](mailto:peace@gmail.com)
+📧 Contact: [eduokuemem@gmail.com](mailto:eduokuemem@gmail.com)

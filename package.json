@@ -1,0 +1,42 @@
+{
+  "name": "batta-marketplace-api",
+  "version": "1.0.0",
+  "description": "Batta Marketplace API is the backend service that handles users, products, carts, and orders for the Batta Marketplace e-commerce platform. It is built to provide secure, role-based and reliable API endpoints for client applications and is designed for production-ready deployment.",
+  "main": "src/server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon",
+    "build": "tsc",
+    "start": "npm run build && node dist/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Codegirlemem/batta-marketplace-api.git"
+  },
+  "keywords": [],
+  "author": "Emem Eduoku",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/Codegirlemem/batta-marketplace-api/issues"
+  },
+  "homepage": "https://github.com/Codegirlemem/batta-marketplace-api#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.3",
+    "nodemon": "^3.1.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1"
+  },
+  "include": [
+    "./src"
+  ],
+  "exclude": [
+    "./dist",
+    "node_modules"
+  ]
+}
