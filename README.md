@@ -169,6 +169,7 @@ npm install
 Create a `.env` file in the root directory and add the following:
 
 ```env
+PORT=5000
 MONGODB_URI=<your-atlas-connection-string>
 JWT_SECRET=<your-secret-key>
 JWT_EXPIRES_IN=1h
