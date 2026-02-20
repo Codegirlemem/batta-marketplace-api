@@ -172,7 +172,6 @@ Create a `.env` file in the root directory and add the following:
 PORT=5000
 MONGODB_URI=<your-atlas-connection-string>
 JWT_SECRET=<your-secret-key>
-JWT_EXPIRES_IN=1h
 COOKIE_NAME=token
 NODE_ENV=development
 CLOUDINARY_CLOUD_NAME=<your-cloud-name>

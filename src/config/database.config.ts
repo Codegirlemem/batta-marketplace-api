@@ -3,7 +3,7 @@ import appEnv from "./env.config.js";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(appEnv.MONGODB_URI as string);
+    await mongoose.connect(appEnv.MONGODB_URI);
     console.log("Database connected successfully");
   } catch (error) {
     console.error("MongoDB connection failed:", error);
