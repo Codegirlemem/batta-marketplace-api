@@ -1,23 +1,34 @@
 import dotenv from "dotenv";
-dotenv.config({ quiet: process.env.NODE_ENV === "production" });
-
-import app from "./app.js";
-import connectDB from "./config/database.config.js";
+import mongoose from "mongoose";
+import express from "express";
+import cookieParser from "cookie-parser";
+import globalErrorMiddleware from "./middlewares/error.middleware.js";
+import apiRouter from "./routes/api.routes.js";
 import appEnv from "./config/env.config.js";
 
+dotenv.config({ quiet: process.env.NODE_ENV === "production" });
+
 const port = process.env.PORT || 5000;
+const app = express();
 
-const startServer = async () => {
-  try {
-    await connectDB();
-
-    app.listen(port, () => {
-      `Server running in ${appEnv.NODE_ENV} mode on port ${port}`;
-    });
-  } catch (error) {
-    console.error("Failed to start server", error);
+mongoose
+  .connect(process.env.MONGODB_URI!)
+  .then(() => console.log("database connected succesfully"))
+  .catch((error) => {
+    console.error("MongoDB connection failed:", error);
     process.exit(1);
-  }
-};
+  });
 
-startServer();
+app.use(express.json());
+app.use(cookieParser());
+
+app.get("/", (req, res) => {
+  res.send("Batta Marketplace API is running!");
+});
+
+app.use("/api/v1", apiRouter);
+app.use(globalErrorMiddleware);
+
+app.listen(port, () =>
+  console.log(`Server running in ${appEnv.NODE_ENV} mode on port ${port}`),
+);

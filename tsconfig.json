@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/node24/tsconfig.json",
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
@@ -21,8 +22,5 @@
     "skipLibCheck": true
   },
   "include": ["./src"],
-  "exclude": ["node_modules", "./dist"],
-  "ts-node": {
-    "logError": true
-  }
+  "exclude": ["./dist", "node_modules"]
 }

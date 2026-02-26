@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/Codegirlemem/batta-marketplace-api#readme",
   "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
