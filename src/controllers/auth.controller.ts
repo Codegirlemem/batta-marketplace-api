@@ -78,7 +78,7 @@ export const loginUser = async (
 
     res.cookie(appEnv.COOKIE_NAME, token, {
       httpOnly: true,
-      secure: appEnv.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
 
@@ -91,7 +91,7 @@ export const loginUser = async (
 export const logoutUser = (req: Request, res: Response, next: NextFunction) => {
   res.clearCookie(appEnv.COOKIE_NAME, {
     httpOnly: true,
-    secure: appEnv.NODE_ENV === "production",
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
   });
 

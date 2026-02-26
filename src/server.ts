@@ -29,6 +29,4 @@ app.get("/", (req, res) => {
 app.use("/api/v1", apiRouter);
 app.use(globalErrorMiddleware);
 
-app.listen(port, () =>
-  console.log(`Server running in ${appEnv.NODE_ENV} mode on port ${port}`),
-);
+app.listen(port, () => console.log(`Server running in  mode on port ${port}`));

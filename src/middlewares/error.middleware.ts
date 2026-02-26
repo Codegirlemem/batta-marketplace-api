@@ -9,7 +9,7 @@ const globalErrorMiddleware = (
   res: Response,
   next: NextFunction,
 ) => {
-  const isDev = env.NODE_ENV === "development";
+  const isDev = process.env.NODE_ENV === "development";
   if (isDev) console.error(err);
 
   if (err instanceof AppError) {

@@ -91,7 +91,7 @@ export const createAdminInvite = async (
     res.status(201).json({
       success: true,
       message: "Invitation sent successfully",
-      ...(appEnv.NODE_ENV === "development" && { data: rawToken }),
+      ...(process.env.NODE_ENV === "development" && { data: rawToken }),
     });
   } catch (error) {
     next(error);

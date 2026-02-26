@@ -104,7 +104,7 @@ export const deleteUser = async (
 
     res.clearCookie(appEnv.COOKIE_NAME, {
       httpOnly: true,
-      secure: appEnv.NODE_ENV === "production",
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
 
