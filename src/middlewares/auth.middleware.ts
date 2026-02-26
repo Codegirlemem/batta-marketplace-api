@@ -5,10 +5,11 @@ import appEnv from "../config/env.config.js";
 import { AuthPayload } from "../types/auth.types.js";
 import { TUserRoles } from "../types/user.types.js";
 import { UserRequest } from "../types/express.js";
+import { getUserByID } from "../utils/user.utils.js";
 
 const { JsonWebTokenError, NotBeforeError, TokenExpiredError } = jwt;
 
-export const isAuthenticated = (
+export const isAuthenticated = async (
   req: UserRequest,
   res: Response,
   next: NextFunction,
@@ -21,7 +22,19 @@ export const isAuthenticated = (
     }
 
     const decodedToken = jwt.verify(token, appEnv.JWT_SECRET) as AuthPayload;
-    req.user = decodedToken;
+    const user = await getUserByID(decodedToken.id);
+
+    if (!user) {
+      return next(new AppError("User does not exist", 401));
+    }
+
+    req.user = {
+      id: user._id.toString(),
+      username: user.username,
+      role: user.role,
+      iat: decodedToken.iat,
+      exp: decodedToken.exp,
+    };
 
     next();
   } catch (error: unknown) {

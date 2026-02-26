@@ -36,7 +36,7 @@ const globalErrorMiddleware = (
 
   return res.status(500).json({
     success: false,
-    message: isDev ? err.message : "An internal server error occurred",
+    message: isDev ? err.message : "Something went wrong!",
   });
 };
 

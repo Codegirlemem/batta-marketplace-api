@@ -1,17 +1,18 @@
 import * as z from "zod";
 import {
+  emailInputSchema,
   passwordInputSchema,
-  userBaseSchema,
+  userZodSchema,
   usernameInputSchema,
 } from "./users.schema.js";
 
-export const loginZodSchema = userBaseSchema.pick({
+export const loginZodSchema = userZodSchema.pick({
   email: true,
   password: true,
 });
 
 export const userEmailSchema = z.strictObject({
-  email: z.email("Invalid email address"),
+  email: emailInputSchema,
 });
 export const passwordSchema = z.strictObject({
   password: passwordInputSchema,
@@ -22,4 +23,10 @@ export const usernameSchema = z.strictObject({
 
 export const tokenSchema = z.strictObject({
   token: z.string(),
+});
+
+export const acceptInviteSchema = z.strictObject({
+  email: z.email().optional(),
+  password: passwordInputSchema,
+  username: usernameInputSchema,
 });

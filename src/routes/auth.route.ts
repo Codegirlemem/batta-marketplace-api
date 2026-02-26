@@ -1,12 +1,12 @@
 import express from "express";
 import {
+  acceptAdminInvite,
   forgotPassword,
   loginUser,
   logoutUser,
   registerUser,
   resetPassword,
 } from "../controllers/auth.controller.js";
-import { acceptAdminInvite } from "../controllers/invite.controller.js";
 
 const router = express.Router();
 
