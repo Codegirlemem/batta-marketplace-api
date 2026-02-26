@@ -2,7 +2,7 @@
   "name": "batta-marketplace-api",
   "version": "1.0.0",
   "description": "Batta Marketplace API is the backend service that handles users, products, carts, and orders for the Batta Marketplace e-commerce platform. It is built to provide secure, role-based and reliable API endpoints for client applications and is designed for production-ready deployment.",
-  "main": "src/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon",
@@ -26,7 +26,7 @@
     "@types/cookie-parser": "^1.4.10",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.2.3",
+    "@types/node": "^25.3.0",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
