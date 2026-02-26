@@ -23,7 +23,6 @@
   "include": ["./src"],
   "exclude": ["node_modules", "./dist"],
   "ts-node": {
-    "logError": true,
-    "pretty": true
+    "logError": true
   }
 }
