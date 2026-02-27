@@ -44,7 +44,10 @@ export const invitationSchema = new Schema(
   },
 );
 
-invitationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+invitationSchema.index(
+  { email: 1, used: 1 },
+  { unique: true, partialFilterExpression: { used: false } },
+);
 
 const InvitationModel = model("Invitation", invitationSchema);
 

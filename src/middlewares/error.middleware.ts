@@ -1,5 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import env from "../config/env.config.js";
 import AppError from "../utils/appError.js";
 import { ZodError, z } from "zod";
 
@@ -28,6 +27,12 @@ const globalErrorMiddleware = (
   }
 
   if (err.code === 11000 && err.keyPattern?.email) {
+    if (err.keyPattern?.used) {
+      return res.status(400).json({
+        success: false,
+        message: "Active invitation already exists",
+      });
+    }
     return res.status(400).json({
       success: false,
       message: "User already exists",

@@ -1,6 +1,5 @@
 import express from "express";
 import {
-  acceptAdminInvite,
   forgotPassword,
   loginUser,
   logoutUser,
@@ -15,6 +14,5 @@ router.post("/login", loginUser);
 router.post("/logout", logoutUser);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);
-router.post("/accept-invite/:token", acceptAdminInvite);
 
 export default router;

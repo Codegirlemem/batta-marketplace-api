@@ -36,13 +36,10 @@ The API handles:
 
 - JSON Web Tokens (JWT)
 - bcrypt (password hashing)
-- cookie-parser
 
 ### Validation & Data Protection
 
 - Zod (schema validation)
-- validator
-- xss (input sanitization)
 - dotenv (environment configuration)
 
 ### File Upload & Media Storage
@@ -72,7 +69,7 @@ batta-marketplace-api/
 │ ├── middleware/ ── Authentication, validation, error handling
 │ ├── utils/ ── Helper and utility functions
 │ ├── config/ ── DB, Cloudinary, and other config files
-│ ├── app.ts ── Express app setup
+│ ├── zodSchemas ── Zod validation schema declarations
 │ └── server.ts ── Server entry point
 │
 ├── .env ── Environment variables
@@ -96,14 +93,13 @@ The API implements secure authentication and role-based access control to protec
 
 ### Role-Based Access (Authorization)
 
-- **Admin**: Can create, update, or delete products and categories
-- **User**: Can view products, manage their cart, and place orders
+- **Admin**: Can create, view, update, and delete products and categories as well as update order status.
+- **User**: Can view all products and products by categories, manage their cart, and place orders
 - Middleware checks the user’s role before allowing access to restricted routes
 
 ### Input Validation & Sanitization
 
-- Uses **Zod** and **validator** to validate incoming data
-- **xss** library used to sanitize inputs and prevent cross-site scripting attacks
+- Uses **Zod** to validate incoming data
 - Ensures that invalid or malicious data is rejected before reaching the database
 
 ### Database

@@ -1,7 +1,6 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../utils/appError.js";
-import appEnv from "../config/env.config.js";
 import { AuthPayload } from "../types/auth.types.js";
 import { TUserRoles } from "../types/user.types.js";
 import { UserRequest } from "../types/express.js";
@@ -21,7 +20,10 @@ export const isAuthenticated = async (
       return next(new AppError("Unauthenticated user. Login to continue", 401));
     }
 
-    const decodedToken = jwt.verify(token, appEnv.JWT_SECRET) as AuthPayload;
+    const decodedToken = jwt.verify(
+      token,
+      process.env.JWT_SECRET!,
+    ) as AuthPayload;
     const user = await getUserByID(decodedToken.id);
 
     if (!user) {

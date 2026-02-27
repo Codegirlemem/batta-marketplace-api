@@ -2,15 +2,14 @@ import express from "express";
 import {
   createAdminInvite,
   deleteAdminInvite,
-  getAllInvites,
-  getInvite,
+  getAllAdminInvites,
+  getAdminInvite,
 } from "../controllers/invite.controller.js";
-import { isAdmin, isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/", getAllInvites);
-router.get("/:id", getInvite);
+router.get("/", getAllAdminInvites);
+router.get("/:id", getAdminInvite);
 router.post("/", createAdminInvite);
 router.delete("/:id", deleteAdminInvite);
 

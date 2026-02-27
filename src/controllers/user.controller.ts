@@ -1,12 +1,10 @@
 import { Response, NextFunction } from "express";
-import * as z from "zod";
 import { UserRequest } from "../types/express.js";
 import UserModel from "../models/user.model.js";
 import AppError from "../utils/appError.js";
 import { getUserByID } from "../utils/user.utils.js";
 import { updateUserSchema, userIdSchema } from "../zodSchemas/users.schema.js";
 import { TUserProfileUpdate } from "../types/user.types.js";
-import appEnv from "../config/env.config.js";
 
 export const getAllUsers = async (
   req: UserRequest,
@@ -102,7 +100,7 @@ export const deleteUser = async (
       return next(new AppError("User not found", 404));
     }
 
-    res.clearCookie(appEnv.COOKIE_NAME, {
+    res.clearCookie(process.env.COOKIE_NAME!, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
