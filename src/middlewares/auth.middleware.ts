@@ -1,10 +1,10 @@
 import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../utils/appError.js";
-import { AuthPayload } from "../types/auth.types.js";
 import { TUserRoles } from "../types/index.types.js";
 import { UserRequest } from "../types/express.js";
 import { getUserByID } from "../utils/index.utils.js";
+import { AuthPayload } from "../types/auth.types.js";
 
 const { JsonWebTokenError, NotBeforeError, TokenExpiredError } = jwt;
 
@@ -24,6 +24,7 @@ export const isAuthenticated = async (
       token,
       process.env.JWT_SECRET!,
     ) as AuthPayload;
+
     const user = await getUserByID(decodedToken.id);
 
     if (!user) {
@@ -31,9 +32,7 @@ export const isAuthenticated = async (
     }
 
     req.user = {
-      id: user._id.toString(),
-      username: user.username,
-      role: user.role,
+      ...user,
       iat: decodedToken.iat,
       exp: decodedToken.exp,
     };

@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 import * as z from "zod";
 
-export const objectIdSchema = z
+export const objectIdSchema = z.coerce
   .string()
   .refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: "Invalid ObjectId",
-  });
+  })
+  .transform((val) => new mongoose.Types.ObjectId(val));
 
 export const emailInputSchema = z.email();
 

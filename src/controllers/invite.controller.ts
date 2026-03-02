@@ -38,7 +38,9 @@ export const getAdminInviteByID = async (
 ) => {
   try {
     const id = objectIdSchema.parse(req.params.id);
-    const invite = await InvitationModel.findById(id).lean();
+    const invite = await InvitationModel.findById(id)
+      .populate({ path: "invitedBy", select: "username role" })
+      .lean();
 
     if (!invite) {
       return next(new AppError("Invitation not found", 404));
@@ -63,7 +65,7 @@ export const createAdminInvite = async (
     if (!req.user) {
       return next(new AppError("Unauthorized", 401));
     }
-    const id = objectIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user._id);
 
     const { email } = userEmailSchema.parse(req.body);
 

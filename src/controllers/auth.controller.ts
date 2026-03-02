@@ -55,7 +55,7 @@ export const loginUser = async (
     }
 
     const payload: AuthPayload = {
-      id: foundUser._id.toString(),
+      id: foundUser._id,
       username: foundUser.username,
       role: foundUser.role,
     };

@@ -25,6 +25,8 @@ export const tokenSchema = z.strictObject({
   token: z.string(),
 });
 
+const token = z.jwt();
+
 export const acceptInviteSchema = z.strictObject({
   email: z.email().optional(),
   password: passwordInputSchema,

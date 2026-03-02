@@ -99,8 +99,6 @@ export const createProduct = async (
   try {
     const productData = createProductSchema.parse(req.body);
 
-    console.log(productData);
-
     // Check that category is valid
     const category = await CategoryModel.exists({ _id: productData.category });
 
@@ -114,8 +112,6 @@ export const createProduct = async (
     });
 
     if (existingProduct) {
-      console.log(existingProduct);
-
       // Restore and update if soft deleted product
       if (existingProduct.status === TProductStatus.Deleted) {
         existingProduct.set({

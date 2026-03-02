@@ -35,8 +35,17 @@ export const getUserProfile = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = objectIdSchema.parse(req.params.id ?? req.user.id);
-    const user = await getUserByID(id);
+    const targetId = req.params.id || req.user._id;
+    const id = objectIdSchema.parse(targetId);
+
+    const isSelf = !req.params.id || req.params.id === req.user._id.toString();
+    let user;
+
+    if (isSelf) {
+      user = req.user;
+    } else {
+      user = await getUserByID(id);
+    }
 
     if (!user) {
       return next(new AppError("User not found", 404));
@@ -60,7 +69,7 @@ export const updateUser = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = objectIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user._id);
     const updates = updateUserSchema.parse(req.body);
     const allowedFields = ["username", "phone", "address"];
 
@@ -96,7 +105,7 @@ export const deleteUser = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = objectIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user._id);
     const deletedUser = await UserModel.findByIdAndDelete(id);
 
     if (!deletedUser) {
