@@ -7,3 +7,9 @@ export enum TUserRoles {
 }
 
 export type TUserProfileUpdate = z.infer<typeof updateUserSchema>;
+
+export enum TProductStatus {
+  Active = "active",
+  Disabled = "disabled",
+  Deleted = "deleted",
+}

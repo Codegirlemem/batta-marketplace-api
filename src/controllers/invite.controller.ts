@@ -4,14 +4,14 @@ import UserModel from "../models/user.model.js";
 import AppError from "../utils/appError.js";
 import { UserRequest } from "../types/express.js";
 import InvitationModel from "../models/invite.model.js";
-import { userIdSchema } from "../zodSchemas/users.schema.js";
 import {
   acceptInviteSchema,
   tokenSchema,
   userEmailSchema,
 } from "../zodSchemas/auth.schema.js";
 import { hashToken } from "../utils/handleToken.js";
-import { TUserRoles } from "../types/user.types.js";
+import { TUserRoles } from "../types/index.types.js";
+import { objectIdSchema } from "../zodSchemas/users.schema.js";
 
 export const getAllAdminInvites = async (
   req: UserRequest,
@@ -31,13 +31,13 @@ export const getAllAdminInvites = async (
   }
 };
 
-export const getAdminInvite = async (
+export const getAdminInviteByID = async (
   req: UserRequest,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const id = userIdSchema.parse(req.params.id);
+    const id = objectIdSchema.parse(req.params.id);
     const invite = await InvitationModel.findById(id).lean();
 
     if (!invite) {
@@ -63,7 +63,7 @@ export const createAdminInvite = async (
     if (!req.user) {
       return next(new AppError("Unauthorized", 401));
     }
-    const id = userIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user.id);
 
     const { email } = userEmailSchema.parse(req.body);
 
@@ -99,18 +99,26 @@ export const createAdminInvite = async (
       message: "Invitation sent successfully",
       ...(process.env.NODE_ENV === "development" && { data: rawToken }),
     });
-  } catch (error) {
+  } catch (error: any) {
+    if (
+      error.code === 11000 &&
+      error.keyPattern?.email &&
+      error.keyPattern?.used
+    ) {
+      next(new AppError("Active invitation already exists", 400));
+    }
+
     next(error);
   }
 };
 
-export const deleteAdminInvite = async (
+export const deleteAdminInviteByID = async (
   req: UserRequest,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const id = userIdSchema.parse(req.params.id);
+    const id = objectIdSchema.parse(req.params.id);
     const deletedInvite = await InvitationModel.findByIdAndDelete(id);
 
     if (!deletedInvite) {

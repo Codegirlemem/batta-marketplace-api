@@ -20,14 +20,6 @@ export const registerUser = async (
   try {
     const signupInfo = userZodSchema.parse(req.body);
 
-    const userExists = await UserModel.findOne({
-      email: signupInfo.email,
-    }).lean();
-
-    if (userExists) {
-      return next(new AppError("User already exists", 400));
-    }
-
     const newUser = new UserModel(signupInfo);
 
     await newUser.save();
@@ -35,7 +27,7 @@ export const registerUser = async (
     return res
       .status(201)
       .json({ success: true, message: "User created succesfully" });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 };
@@ -68,7 +60,7 @@ export const loginUser = async (
       role: foundUser.role,
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET!, {
-      expiresIn: "15m",
+      expiresIn: "24h",
     });
 
     res.cookie(process.env.COOKIE_NAME!, token, {

@@ -1,9 +1,22 @@
 import express from "express";
-import { isAuthenticated } from "../middlewares/auth.middleware.js";
-import { getAllCategories } from "../controllers/category.controller.js";
+import {
+  createCategory,
+  deleteCategory,
+  getAllCategories,
+  getCategoryBySlug,
+  updateCategory,
+} from "../controllers/category.controller.js";
+import { isAdmin, isAuthenticated } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/", isAuthenticated, getAllCategories);
+// public route
+router.get("/", getAllCategories);
+router.get("/:slug", getCategoryBySlug);
+
+// Admin only route
+router.post("/", isAuthenticated, isAdmin, createCategory);
+router.put("/:slug", isAuthenticated, isAdmin, updateCategory);
+router.delete("/:slug", isAuthenticated, isAdmin, deleteCategory);
 
 export default router;

@@ -2,9 +2,12 @@ import { Response, NextFunction } from "express";
 import { UserRequest } from "../types/express.js";
 import UserModel from "../models/user.model.js";
 import AppError from "../utils/appError.js";
-import { getUserByID } from "../utils/user.utils.js";
-import { updateUserSchema, userIdSchema } from "../zodSchemas/users.schema.js";
-import { TUserProfileUpdate } from "../types/user.types.js";
+import { getUserByID } from "../utils/index.utils.js";
+import {
+  objectIdSchema,
+  updateUserSchema,
+} from "../zodSchemas/users.schema.js";
+import { TUserProfileUpdate } from "../types/index.types.js";
 
 export const getAllUsers = async (
   req: UserRequest,
@@ -32,7 +35,7 @@ export const getUserProfile = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = userIdSchema.parse(req.params.id ?? req.user.id);
+    const id = objectIdSchema.parse(req.params.id ?? req.user.id);
     const user = await getUserByID(id);
 
     if (!user) {
@@ -57,7 +60,7 @@ export const updateUser = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = userIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user.id);
     const updates = updateUserSchema.parse(req.body);
     const allowedFields = ["username", "phone", "address"];
 
@@ -93,7 +96,7 @@ export const deleteUser = async (
   try {
     if (!req.user) return next(new AppError("Unathourized", 401));
 
-    const id = userIdSchema.parse(req.user.id);
+    const id = objectIdSchema.parse(req.user.id);
     const deletedUser = await UserModel.findByIdAndDelete(id);
 
     if (!deletedUser) {

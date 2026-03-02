@@ -1,7 +1,14 @@
+import mongoose from "mongoose";
 import * as z from "zod";
 
-export const userIdSchema = z.string();
+export const objectIdSchema = z
+  .string()
+  .refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: "Invalid ObjectId",
+  });
+
 export const emailInputSchema = z.email();
+
 export const passwordInputSchema = z
   .string()
   .trim()

@@ -27,15 +27,16 @@ const globalErrorMiddleware = (
   }
 
   if (err.code === 11000 && err.keyPattern?.email) {
-    if (err.keyPattern?.used) {
-      return res.status(400).json({
-        success: false,
-        message: "Active invitation already exists",
-      });
-    }
     return res.status(400).json({
       success: false,
       message: "User already exists",
+    });
+  }
+
+  if (err.name === "ValidationError" && err.errors.slug) {
+    return res.status(400).json({
+      success: false,
+      message: err.errors.slug.message,
     });
   }
 

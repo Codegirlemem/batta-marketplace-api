@@ -2,9 +2,9 @@ import { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import AppError from "../utils/appError.js";
 import { AuthPayload } from "../types/auth.types.js";
-import { TUserRoles } from "../types/user.types.js";
+import { TUserRoles } from "../types/index.types.js";
 import { UserRequest } from "../types/express.js";
-import { getUserByID } from "../utils/user.utils.js";
+import { getUserByID } from "../utils/index.utils.js";
 
 const { JsonWebTokenError, NotBeforeError, TokenExpiredError } = jwt;
 

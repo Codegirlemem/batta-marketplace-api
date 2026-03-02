@@ -1,6 +1,6 @@
 import { model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import { TUserRoles } from "../types/user.types.js";
+import { TUserRoles } from "../types/index.types.js";
 import { generateTokens } from "../utils/handleToken.js";
 
 export const userSchema = new Schema(
