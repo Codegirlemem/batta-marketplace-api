@@ -225,7 +225,7 @@ npm run build && npm start
 
 ### 📌 API Base URL
 
-[`http://localhost:5000/api`](http://localhost:5000/api)
+[`https://batta-marketplace-api.onrender.com`](https://batta-marketplace-api.onrender.com)
 
 ## 🎯 Learning Objectives
 
@@ -237,9 +237,9 @@ This project demonstrates:
 - Middleware usage for **route protection, input validation, and error handling**
 - **Secure password storage** with bcrypt
 - **JWT-based session management** using HttpOnly cookies
-- Input validation and sanitization (Zod, validator, xss)
+- Input validation and sanitization (Zod)
 - Database schema design using MongoDB and Mongoose
-- CRUD operations for Products, Categories, Cart, and Orders
+- CRUD operations for Users, Products, Categories, Cart, and Orders
 - Cloud-based file storage integration (Cloudinary)
 
 ## 📖 Future Improvements

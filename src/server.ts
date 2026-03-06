@@ -17,6 +17,9 @@ app.use(express.json());
 app.use(express.urlencoded());
 app.use(cookieParser());
 
+app.get("/", (req, res) => {
+  res.send("Welcome to Batta Marketplace API!");
+});
 app.use("/api/v1", apiRouter);
 app.use(globalErrorMiddleware);
 

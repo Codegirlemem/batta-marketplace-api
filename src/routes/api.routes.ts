@@ -9,9 +9,6 @@ import orderRouter from "./order.routes.js";
 
 const apiRouter = express.Router();
 
-apiRouter.get("/", (req, res) => {
-  res.send("Welcome to Batta Marketplace API!");
-});
 apiRouter.use("/auth", authRouter);
 apiRouter.use("/users", userRouter);
 apiRouter.use("/", inviteRouter);
