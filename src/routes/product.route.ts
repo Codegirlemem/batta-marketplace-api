@@ -8,6 +8,7 @@ import {
   updateProduct,
 } from "../controllers/product.controller.js";
 import { isAdmin, isAuthenticated } from "../middlewares/auth.middleware.js";
+import upload from "../config/multer.config.js";
 
 const router = express.Router();
 
@@ -17,8 +18,20 @@ router.get("/categories/:slug/products", getProductsByCategory);
 router.get("/products/:id", getProductById);
 
 // Admin only routes
-router.post("/products", isAuthenticated, isAdmin, createProduct);
-router.put("/products/:id", isAuthenticated, isAdmin, updateProduct);
+router.post(
+  "/products",
+  isAuthenticated,
+  isAdmin,
+  upload.array("images", 5),
+  createProduct,
+);
+router.put(
+  "/products/:id",
+  isAuthenticated,
+  isAdmin,
+  upload.array("images", 5),
+  updateProduct,
+);
 router.delete("/products/:id", isAuthenticated, isAdmin, deleteProduct);
 
 export default router;

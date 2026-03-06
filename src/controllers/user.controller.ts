@@ -2,12 +2,16 @@ import { Response, NextFunction } from "express";
 import { UserRequest } from "../types/express.js";
 import UserModel from "../models/user.model.js";
 import AppError from "../utils/appError.js";
-import { getUserByID } from "../utils/index.utils.js";
+import { getUserByID, uploadToCloudinary } from "../utils/index.utils.js";
 import {
   objectIdSchema,
   updateUserSchema,
 } from "../zodSchemas/users.schema.js";
-import { TUserProfileUpdate } from "../types/index.types.js";
+import {
+  TProductImage,
+  TUserProfileUpdate,
+  TUserUpdateData,
+} from "../types/index.types.js";
 
 export const getAllUsers = async (
   req: UserRequest,
@@ -71,7 +75,14 @@ export const updateUser = async (
 
     const id = objectIdSchema.parse(req.user._id);
     const updates = updateUserSchema.parse(req.body);
+    const avatarPath = req.file?.path;
     const allowedFields = ["username", "phone", "address"];
+    let avatar;
+
+    if (avatarPath) {
+      avatar = await uploadToCloudinary(avatarPath);
+    }
+    console.log(avatar);
 
     const userUpdates = Object.fromEntries(
       Object.entries(updates).filter(
@@ -79,9 +90,13 @@ export const updateUser = async (
       ),
     ) as TUserProfileUpdate;
 
-    const user = await UserModel.findByIdAndUpdate(id, userUpdates, {
+    const finalUpdate: TUserUpdateData = { ...userUpdates };
+    if (avatar) finalUpdate.avatar = avatar as TProductImage;
+
+    const user = await UserModel.findByIdAndUpdate(id, finalUpdate, {
       runValidators: true,
-    });
+      returnDocument: "after",
+    }).lean();
 
     if (!user) {
       return next(new AppError("User not found", 404));

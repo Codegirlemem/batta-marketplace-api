@@ -1,4 +1,5 @@
 import { Response, NextFunction } from "express";
+import { v2 as cloudinary } from "cloudinary";
 import { UserRequest } from "../types/express.js";
 import { categorySlugZodSchema } from "../zodSchemas/category.schema.js";
 import CategoryModel from "../models/category.model.js";
@@ -9,11 +10,15 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "../zodSchemas/product.schema.js";
-import { TProductStatus } from "../types/index.types.js";
+import {
+  TProductDoc,
+  TProductImage,
+  TProductSchema,
+  TProductStatus,
+  TProductUpdateDoc,
+} from "../types/index.types.js";
+import { productFilter, uploadToCloudinary } from "../utils/index.utils.js";
 
-const productFilter = {
-  status: { $in: [TProductStatus.Active, TProductStatus.Disabled] },
-};
 export const getAllProducts = async (
   req: UserRequest,
   res: Response,
@@ -33,6 +38,7 @@ export const getAllProducts = async (
     next(error);
   }
 };
+
 export const getProductsByCategory = async (
   req: UserRequest,
   res: Response,
@@ -96,8 +102,11 @@ export const createProduct = async (
   res: Response,
   next: NextFunction,
 ) => {
+  let uploadedImages: TProductImage[] | undefined;
+
   try {
     const productData = createProductSchema.parse(req.body);
+    const productImages = req.files as Express.Multer.File[] | [];
 
     // Check that category is valid
     const category = await CategoryModel.exists({ _id: productData.category });
@@ -106,34 +115,49 @@ export const createProduct = async (
       return next(new AppError("Product must have a valid category", 400));
     }
 
+    if (productImages.length > 0)
+      uploadedImages = (await uploadToCloudinary(
+        productImages.map((image) => image.path),
+      )) as TProductImage[];
+
     // Check if softdeleted or active product with the same name exist
     const existingProduct = await ProductModel.findOne({
       name: productData.name,
     });
 
     if (existingProduct) {
-      // Restore and update if soft deleted product
+      // Restore and update soft deleted product
       if (existingProduct.status === TProductStatus.Deleted) {
-        existingProduct.set({
+        const update: TProductSchema = {
           ...productData,
+          quantity: productData.quantity || 0,
+          price: productData.price || 0,
           status: productData.status || TProductStatus.Active,
-          deletedBy: undefined,
-          deletedAt: undefined,
-        });
+          images: uploadedImages?.length
+            ? uploadedImages
+            : (existingProduct.images as unknown as TProductImage[]),
+          deletedBy: null,
+          deletedAt: null,
+        };
 
-        await existingProduct.save();
+        existingProduct.set(update);
+
+        const activatedPdct = await existingProduct.save();
+
         return res.status(201).json({
           success: true,
           message: "Product created successfully",
-          data: existingProduct,
+          data: activatedPdct,
         });
       } else {
         return next(new AppError("Product with this name already exists", 400));
       }
     }
 
+    // create new product if no soft deleted product
     const newProduct = new ProductModel({
       ...productData,
+      images: uploadedImages?.length ? uploadedImages : [],
       description: productData.description || undefined,
     });
 
@@ -145,6 +169,11 @@ export const createProduct = async (
       data: product,
     });
   } catch (error: any) {
+    if (uploadedImages && uploadedImages.length > 0) {
+      await Promise.all(
+        uploadedImages.map((img) => cloudinary.uploader.destroy(img.public_id)),
+      );
+    }
     const err = duplicateError(error, "Product");
 
     next(err);
@@ -156,9 +185,12 @@ export const updateProduct = async (
   res: Response,
   next: NextFunction,
 ) => {
+  let uploadedImages: TProductImage[] | undefined;
+
   try {
     const productId = objectIdSchema.parse(req.params.id);
     const productData = updateProductSchema.parse(req.body);
+    const productImages = req.files as Express.Multer.File[] | [];
 
     if (productData.category) {
       // Validate category if it is part of the update
@@ -170,11 +202,23 @@ export const updateProduct = async (
         return next(new AppError("Product must have a valid category", 400));
       }
     }
+    // upload image to cloudinary and get image url
+    if (productImages.length > 0) {
+      uploadedImages = (await uploadToCloudinary(
+        productImages.map((image) => image.path),
+      )) as TProductImage[];
+    }
+
+    let updateData = {
+      ...productData,
+    } as TProductUpdateDoc;
+
+    if (uploadedImages?.length) updateData.images = uploadedImages;
 
     // Update only products that have not been soft deleted
     const updatedProduct = await ProductModel.findOneAndUpdate(
       { _id: productId, ...productFilter },
-      productData,
+      updateData,
       {
         returnDocument: "after",
         runValidators: true,
@@ -191,6 +235,11 @@ export const updateProduct = async (
       data: updatedProduct,
     });
   } catch (error) {
+    if (uploadedImages && uploadedImages.length > 0) {
+      await Promise.all(
+        uploadedImages.map((img) => cloudinary.uploader.destroy(img.public_id)),
+      );
+    }
     const err = duplicateError(error, "Product");
     next(err);
   }
@@ -209,7 +258,7 @@ export const deleteProduct = async (
       { _id: productId, ...productFilter },
       {
         status: TProductStatus.Deleted,
-        deletedBy: req.user?.id,
+        deletedBy: req.user?._id,
         deletedAt: new Date(),
       },
     ).lean();

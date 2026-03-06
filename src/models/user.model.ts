@@ -1,4 +1,4 @@
-import { model, Schema } from "mongoose";
+import { model, Schema, Types } from "mongoose";
 import bcrypt from "bcrypt";
 import { TUserRoles } from "../types/index.types.js";
 import { generateTokens } from "../utils/handleToken.js";
@@ -42,6 +42,11 @@ export const userSchema = new Schema(
     address: {
       type: String,
       trim: true,
+    },
+    cart: { type: Types.ObjectId, ref: "Cart" },
+    avatar: {
+      type: String,
+      default: null,
     },
     passwordResetToken: {
       type: String,

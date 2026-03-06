@@ -1,7 +1,15 @@
 import { model, Schema, Types } from "mongoose";
-import { TProductStatus } from "../types/index.types.js";
+import { TProductStatus, TProductImage } from "../types/index.types.js";
 
-const productSchema = new Schema(
+const productImageSchema = new Schema(
+  {
+    secure_url: String,
+    public_id: String,
+  },
+  { _id: false },
+);
+
+export const productSchema = new Schema(
   {
     name: {
       type: String,
@@ -16,15 +24,30 @@ const productSchema = new Schema(
       trim: true,
       maxLength: [50, "Description must not exceed 50 characters"],
     },
-    price: { type: Number, default: 0, min: 0 },
+    price: {
+      type: Number,
+      default: 0,
+      min: [0, "Price cannot be less than 0"],
+    },
     currency: { type: String, default: "NGN", trim: true },
-    quantity: { type: Number, default: 0, min: 0 },
+    quantity: {
+      type: Number,
+      default: 0,
+      min: [0, "Quantity cannot be less than 0"],
+    },
     category: {
       type: Types.ObjectId,
       ref: "Category",
       required: [true, "Product category is required"],
     },
-    imageUrl: { type: String, trim: true },
+    images: {
+      type: [productImageSchema],
+      default: [],
+      validate: {
+        validator: (arr: any[]) => !arr || arr.length <= 5,
+        message: "Maximum 5 images allowed",
+      },
+    },
     status: {
       type: String,
       enum: {
@@ -40,22 +63,27 @@ const productSchema = new Schema(
 );
 
 productSchema.index(
-  { name: 1 },
+  { category: 1, name: 1 },
   { unique: true, partialFilterExpression: { isDeleted: false } },
 );
 
+productSchema.index({ name: 1 });
+
 productSchema.pre("save", function () {
-  if ((this.isNew || this.isModified("quantity")) && this.quantity < 1) {
-    this.status = TProductStatus.Disabled;
+  if (this.isNew || this.isModified("quantity")) {
+    this.status =
+      this.quantity < 1 ? TProductStatus.Disabled : TProductStatus.Active;
   }
 });
 
 productSchema.pre("findOneAndUpdate", function () {
   const update = this.getUpdate() as any;
 
-  if (update.quantity < 1) {
-    this.set({ status: TProductStatus.Disabled });
-  }
+  if (update.status) return;
+
+  update.quantity < 1
+    ? this.set({ status: TProductStatus.Disabled })
+    : this.set({ status: TProductStatus.Active });
 });
 
 const ProductModel = model("Product", productSchema);

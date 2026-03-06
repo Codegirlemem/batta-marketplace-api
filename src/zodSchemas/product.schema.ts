@@ -1,5 +1,4 @@
 import { z } from "zod";
-import mongoose from "mongoose";
 import { TProductStatus } from "../types/index.types.js";
 import { objectIdSchema } from "./users.schema.js";
 
@@ -19,11 +18,15 @@ export const createProductSchema = z.strictObject({
 
   price: z.coerce.number().min(0, "Price cannot be negative").optional(),
 
-  quantity: z.coerce.number().min(0, "Quantity cannot be negative").optional(),
+  quantity: z.coerce
+    .number()
+    .int("Quantity must be a whole number")
+    .min(0, "Quantity cannot be negative")
+    .optional(),
 
   category: objectIdSchema,
 
-  imageUrl: z.url("Invalid image URL").optional(),
+  currency: z.string().trim().optional(),
 
   status: z.enum([TProductStatus.Active, TProductStatus.Disabled]).optional(),
 });

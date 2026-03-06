@@ -115,7 +115,16 @@ The API implements secure authentication and role-based access control to protec
 
 - Register new users (User)
 - Login users (User)
+- Logout users (User)
+- Reset password (User)
+- Get, update and delete profile (User)
+- Get all users profile and get single profile (Admin)
 - Role-based access control (Admin / User)
+
+### 👤 Invitation
+
+- Send admin invite, view all invites and delete invites (Admin)
+- Accept admin invite (User)
 
 ### 🛍 Products
 
@@ -137,13 +146,14 @@ The API implements secure authentication and role-based access control to protec
 - Add items to cart (User)
 - Remove items from cart (User)
 - Update item quantity in cart (User)
-- View cart (User)
+- View cart (User and Admin)
+- View all carts (Admin)
 
 ### 📑 Orders
 
-- Create orders (User)
+- Create, update, cancel and pay for orders (User)
 - View orders for the authenticated user (User)
-- Admin: manage all orders (view, update status) (Admin)
+- Admin: manage all orders (view all, update status) (Admin)
 
 ## ⚙️ Installation & Setup
 
@@ -165,7 +175,6 @@ npm install
 Create a `.env` file in the root directory and add the following:
 
 ```env
-PORT=5000
 MONGODB_URI=<your-atlas-connection-string>
 JWT_SECRET=<your-secret-key>
 COOKIE_NAME=token
@@ -197,7 +206,7 @@ CLOUDINARY_API_SECRET=<your-cloudinary-api-secret>
   "scripts": {
     "dev": "nodemon",
     "build": "tsc",
-    "start": "npm run build && node dist/server.js"
+    "start": "node dist/server.js"
   }
 }
 ```
@@ -211,7 +220,7 @@ npm run dev
 ### Start the production server:
 
 ```bash
-npm start
+npm run build && npm start
 ```
 
 ### 📌 API Base URL

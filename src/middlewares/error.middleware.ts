@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import AppError from "../utils/appError.js";
 import { ZodError, z } from "zod";
+import multer from "multer";
 
 const globalErrorMiddleware = (
   err: any,
@@ -24,6 +25,34 @@ const globalErrorMiddleware = (
       message: "Validation Error",
       errors: z.flattenError(err),
     });
+  }
+
+  if (err instanceof multer.MulterError) {
+    switch (err.code) {
+      case "LIMIT_FILE_SIZE":
+        return res.status(400).json({
+          success: false,
+          message: "File size must not exceed 5MB",
+        });
+
+      case "LIMIT_FILE_COUNT":
+        return res.status(400).json({
+          success: false,
+          message: "Maximum 5 files allowed",
+        });
+
+      case "LIMIT_UNEXPECTED_FILE":
+        return res.status(400).json({
+          success: false,
+          message: "Only one file upload allowed",
+        });
+
+      default:
+        return res.status(400).json({
+          success: false,
+          message: "File upload error",
+        });
+    }
   }
 
   if (err.code === 11000 && err.keyPattern?.email) {

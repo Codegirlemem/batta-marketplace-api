@@ -6,12 +6,13 @@ import {
   updateUser,
 } from "../controllers/user.controller.js";
 import { isAdmin, isAuthenticated } from "../middlewares/auth.middleware.js";
+import upload from "../config/multer.config.js";
 
 const router = express.Router();
 
 // Authenticated user route
 router.get("/me", isAuthenticated, getUserProfile);
-router.put("/me", isAuthenticated, updateUser);
+router.patch("/me", isAuthenticated, upload.single("avatar"), updateUser);
 router.delete("/me", isAuthenticated, deleteUser);
 
 // Admin only route
