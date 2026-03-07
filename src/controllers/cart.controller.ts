@@ -172,7 +172,6 @@ export const getUserCart = async (
     } else {
       if (!req.user.cart) {
         cart = { items: [] };
-        //   return next(new AppError("User has no cart", 404));
       } else {
         cart = await CartModel.findById(req.user.cart).populate({
           path: "items.product",

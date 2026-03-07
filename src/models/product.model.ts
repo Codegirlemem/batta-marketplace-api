@@ -1,5 +1,5 @@
 import { model, Schema, Types } from "mongoose";
-import { TProductStatus, TProductImage } from "../types/index.types.js";
+import { TProductStatus } from "../types/index.types.js";
 
 const productImageSchema = new Schema(
   {

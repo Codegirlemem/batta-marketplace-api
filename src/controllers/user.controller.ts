@@ -1,14 +1,19 @@
+import fs from "fs/promises";
 import { Response, NextFunction } from "express";
 import { UserRequest } from "../types/express.js";
 import UserModel from "../models/user.model.js";
 import AppError from "../utils/appError.js";
-import { getUserByID, uploadToCloudinary } from "../utils/index.utils.js";
+import {
+  deleteCloudImage,
+  getUserByID,
+  uploadToCloudinary,
+} from "../utils/index.utils.js";
 import {
   objectIdSchema,
   updateUserSchema,
 } from "../zodSchemas/users.schema.js";
 import {
-  TProductImage,
+  TCloudImage,
   TUserProfileUpdate,
   TUserUpdateData,
 } from "../types/index.types.js";
@@ -37,12 +42,13 @@ export const getUserProfile = async (
   next: NextFunction,
 ) => {
   try {
-    if (!req.user) return next(new AppError("Unathourized", 401));
+    if (!req.user) return next(new AppError("Access denied", 401));
 
-    const targetId = req.params.id || req.user._id;
-    const id = objectIdSchema.parse(targetId);
+    const id = req.params.id
+      ? objectIdSchema.parse(req.params.id)
+      : req.user._id;
 
-    const isSelf = !req.params.id || req.params.id === req.user._id.toString();
+    const isSelf = req.user._id.toString() === id.toString();
     let user;
 
     if (isSelf) {
@@ -70,19 +76,23 @@ export const updateUser = async (
   res: Response,
   next: NextFunction,
 ) => {
-  try {
-    if (!req.user) return next(new AppError("Unathourized", 401));
+  let avatar: TCloudImage | undefined;
 
-    const id = objectIdSchema.parse(req.user._id);
+  try {
+    if (!req.user) return next(new AppError("Access denied", 401));
+
+    const id = req.user._id;
     const updates = updateUserSchema.parse(req.body);
     const avatarPath = req.file?.path;
     const allowedFields = ["username", "phone", "address"];
-    let avatar;
 
-    if (avatarPath) {
-      avatar = await uploadToCloudinary(avatarPath);
+    let user = await UserModel.findById(id);
+
+    if (!user) {
+      avatarPath && (await fs.unlink(avatarPath));
+      return next(new AppError("User not found", 404));
     }
-    console.log(avatar);
+    const previousAvatar = user.avatar?.public_id;
 
     const userUpdates = Object.fromEntries(
       Object.entries(updates).filter(
@@ -90,17 +100,18 @@ export const updateUser = async (
       ),
     ) as TUserProfileUpdate;
 
-    const finalUpdate: TUserUpdateData = { ...userUpdates };
-    if (avatar) finalUpdate.avatar = avatar as TProductImage;
-
-    const user = await UserModel.findByIdAndUpdate(id, finalUpdate, {
-      runValidators: true,
-      returnDocument: "after",
-    }).lean();
-
-    if (!user) {
-      return next(new AppError("User not found", 404));
+    if (avatarPath) {
+      avatar = (await uploadToCloudinary(avatarPath)) as TCloudImage;
     }
+
+    const finalUpdate: TUserUpdateData = { ...userUpdates };
+
+    if (avatar) finalUpdate.avatar = avatar;
+
+    user.set({ ...finalUpdate });
+    user = await user.save();
+
+    previousAvatar && (await deleteCloudImage(previousAvatar));
 
     res.status(200).json({
       success: true,
@@ -108,6 +119,7 @@ export const updateUser = async (
       data: user,
     });
   } catch (error) {
+    avatar && (await deleteCloudImage(avatar.public_id));
     next(error);
   }
 };
@@ -118,13 +130,13 @@ export const deleteUser = async (
   next: NextFunction,
 ) => {
   try {
-    if (!req.user) return next(new AppError("Unathourized", 401));
+    if (!req.user) return next(new AppError("Access denied", 401));
 
     const id = objectIdSchema.parse(req.user._id);
     const deletedUser = await UserModel.findByIdAndDelete(id);
 
     if (!deletedUser) {
-      return next(new AppError("User not found", 404));
+      return next(new AppError("User not found or already deleted", 404));
     }
 
     res.clearCookie(process.env.COOKIE_NAME!, {

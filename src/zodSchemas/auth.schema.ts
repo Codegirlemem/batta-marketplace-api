@@ -6,10 +6,15 @@ import {
   usernameInputSchema,
 } from "./users.schema.js";
 
-export const loginZodSchema = userZodSchema.pick({
-  email: true,
-  password: true,
-});
+export const signupZodSchema = userZodSchema
+  .pick({
+    email: true,
+    password: true,
+    username: true,
+  })
+  .strict();
+
+export const loginZodSchema = userZodSchema.omit({ username: true }).strict();
 
 export const userEmailSchema = z.strictObject({
   email: emailInputSchema,
@@ -24,8 +29,6 @@ export const usernameSchema = z.strictObject({
 export const tokenSchema = z.strictObject({
   token: z.string(),
 });
-
-const token = z.jwt();
 
 export const acceptInviteSchema = z.strictObject({
   email: z.email().optional(),

@@ -45,7 +45,10 @@ export const userSchema = new Schema(
     },
     cart: { type: Types.ObjectId, ref: "Cart" },
     avatar: {
-      type: String,
+      type: {
+        public_id: { type: String, required: true },
+        secure_url: { type: String, required: true },
+      },
       default: null,
     },
     passwordResetToken: {

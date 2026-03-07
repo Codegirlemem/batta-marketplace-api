@@ -2,6 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import AppError from "../utils/appError.js";
 import { ZodError, z } from "zod";
 import multer from "multer";
+import {
+  JsonWebTokenError,
+  NotBeforeError,
+  TokenExpiredError,
+} from "jsonwebtoken";
+import { CapitalizeFirstLetter } from "../utils/index.utils.js";
 
 const globalErrorMiddleware = (
   err: any,
@@ -24,6 +30,17 @@ const globalErrorMiddleware = (
       success: false,
       message: "Validation Error",
       errors: z.flattenError(err),
+    });
+  }
+
+  if (
+    err instanceof JsonWebTokenError ||
+    err instanceof TokenExpiredError ||
+    err instanceof NotBeforeError
+  ) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid or expired token",
     });
   }
 
@@ -55,10 +72,12 @@ const globalErrorMiddleware = (
     }
   }
 
-  if (err.code === 11000 && err.keyPattern?.email) {
+  if (err.code === 11000) {
+    const field = Object.values(err.keyValue)[0] as string;
+
     return res.status(400).json({
       success: false,
-      message: "User already exists",
+      message: `${CapitalizeFirstLetter(field)} already exists`,
     });
   }
 

@@ -6,10 +6,10 @@ import AppError from "../utils/appError.js";
 import {
   loginZodSchema,
   passwordSchema,
+  signupZodSchema,
   tokenSchema,
   userEmailSchema,
 } from "../zodSchemas/auth.schema.js";
-import { userZodSchema } from "../zodSchemas/users.schema.js";
 import { hashToken } from "../utils/handleToken.js";
 
 export const registerUser = async (
@@ -18,7 +18,7 @@ export const registerUser = async (
   next: NextFunction,
 ) => {
   try {
-    const signupInfo = userZodSchema.parse(req.body);
+    const signupInfo = signupZodSchema.parse(req.body);
 
     const newUser = new UserModel(signupInfo);
 
@@ -97,7 +97,7 @@ export const forgotPassword = async (
     const foundUser = await UserModel.findOne({ email });
 
     if (!foundUser) {
-      return next(new AppError("User not found", 404));
+      return next(new AppError("Invalid credentials", 401));
     }
 
     const rawToken = foundUser.createPasswordResetToken();

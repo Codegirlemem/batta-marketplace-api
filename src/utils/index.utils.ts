@@ -7,6 +7,8 @@ import ProductModel, { productSchema } from "../models/product.model.js";
 import { TProductStatus } from "../types/index.types.js";
 import AppError from "./appError.js";
 
+export const allowedFiles = ["image/jpeg", "image/png", "image/webp"];
+
 export const getUserByID = async (id: mongoose.Types.ObjectId) => {
   const user = await UserModel.findById(id)
     .select("-password -passwordResetToken -passwordResetExpires")
@@ -70,4 +72,15 @@ export const uploadToCloudinary = async (filePath: string | string[]) => {
   }
 };
 
-export const allowedFiles = ["image/jpeg", "image/png", "image/webp"];
+export const deleteCloudImage = async (public_id: string) => {
+  try {
+    await cloudinary.uploader.destroy(public_id);
+  } catch (destroyError) {
+    console.error("Failed to delete old avatar:", destroyError);
+  }
+};
+
+export const CapitalizeFirstLetter = (word: string) => {
+  const newWord = word.charAt(0).toUpperCase + word.slice(1);
+  return newWord;
+};

@@ -13,7 +13,7 @@ export enum TUserRoles {
 }
 
 export type TUserProfileUpdate = z.infer<typeof updateUserSchema>;
-export type TUserUpdateData = TUserProfileUpdate & { avatar?: TProductImage };
+export type TUserUpdateData = TUserProfileUpdate & { avatar?: TCloudImage };
 
 export enum TProductStatus {
   Active = "active",
@@ -27,18 +27,18 @@ export type TProductFilter = {
   status: { $in: TProductStatus[] };
 };
 
-export type TProductImage = {
+export type TCloudImage = {
   secure_url: string;
   public_id: string;
 };
 
 export type TProductDoc = z.infer<typeof createProductSchema>;
 export type TProductUpdate = z.infer<typeof updateProductSchema>;
-export type TProductUpdateDoc = TProductUpdate & { images?: TProductImage[] };
+export type TProductUpdateDoc = TProductUpdate & { images?: TCloudImage[] };
 export type TProductSchema = TProductDoc & {
   deletedAt?: Date | null;
   deletedBy?: string | null;
-  images?: TProductImage[];
+  images?: TCloudImage[];
 };
 export type TCartDocument = InferSchemaType<typeof cartSchema>;
 

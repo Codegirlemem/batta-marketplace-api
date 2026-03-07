@@ -20,7 +20,7 @@
   "bugs": {
     "url": "https://github.com/Codegirlemem/batta-marketplace-api/issues"
   },
-  "homepage": "https://github.com/Codegirlemem/batta-marketplace-api#readme",
+  "homepage": "https://batta-marketplace-api.onrender.com",
   "devDependencies": {
     "@tsconfig/node24": "^24.0.4",
     "@types/bcrypt": "^6.0.0",

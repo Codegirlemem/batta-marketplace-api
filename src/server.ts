@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
 import express from "express";
 import cookieParser from "cookie-parser";
 import globalErrorMiddleware from "./middlewares/error.middleware.js";

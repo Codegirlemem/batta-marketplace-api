@@ -11,13 +11,16 @@ import {
   updateProductSchema,
 } from "../zodSchemas/product.schema.js";
 import {
-  TProductDoc,
-  TProductImage,
+  TCloudImage,
   TProductSchema,
   TProductStatus,
   TProductUpdateDoc,
 } from "../types/index.types.js";
-import { productFilter, uploadToCloudinary } from "../utils/index.utils.js";
+import {
+  deleteCloudImage,
+  productFilter,
+  uploadToCloudinary,
+} from "../utils/index.utils.js";
 
 export const getAllProducts = async (
   req: UserRequest,
@@ -102,7 +105,7 @@ export const createProduct = async (
   res: Response,
   next: NextFunction,
 ) => {
-  let uploadedImages: TProductImage[] | undefined;
+  let uploadedImages: TCloudImage[] | undefined;
 
   try {
     const productData = createProductSchema.parse(req.body);
@@ -118,7 +121,7 @@ export const createProduct = async (
     if (productImages.length > 0)
       uploadedImages = (await uploadToCloudinary(
         productImages.map((image) => image.path),
-      )) as TProductImage[];
+      )) as TCloudImage[];
 
     // Check if softdeleted or active product with the same name exist
     const existingProduct = await ProductModel.findOne({
@@ -135,7 +138,7 @@ export const createProduct = async (
           status: productData.status || TProductStatus.Active,
           images: uploadedImages?.length
             ? uploadedImages
-            : (existingProduct.images as unknown as TProductImage[]),
+            : (existingProduct.images as unknown as TCloudImage[]),
           deletedBy: null,
           deletedAt: null,
         };
@@ -185,7 +188,7 @@ export const updateProduct = async (
   res: Response,
   next: NextFunction,
 ) => {
-  let uploadedImages: TProductImage[] | undefined;
+  let uploadedImages: TCloudImage[] | undefined;
 
   try {
     const productId = objectIdSchema.parse(req.params.id);
@@ -206,7 +209,7 @@ export const updateProduct = async (
     if (productImages.length > 0) {
       uploadedImages = (await uploadToCloudinary(
         productImages.map((image) => image.path),
-      )) as TProductImage[];
+      )) as TCloudImage[];
     }
 
     let updateData = {
@@ -237,7 +240,7 @@ export const updateProduct = async (
   } catch (error) {
     if (uploadedImages && uploadedImages.length > 0) {
       await Promise.all(
-        uploadedImages.map((img) => cloudinary.uploader.destroy(img.public_id)),
+        uploadedImages.map((img) => deleteCloudImage(img.public_id)),
       );
     }
     const err = duplicateError(error, "Product");
