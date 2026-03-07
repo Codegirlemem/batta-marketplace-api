@@ -5,7 +5,7 @@ import {
   createCategoryZodSchema,
 } from "../zodSchemas/category.schema.js";
 import CategoryModel from "../models/category.model.js";
-import AppError, { duplicateError } from "../utils/appError.js";
+import AppError from "../utils/appError.js";
 import ProductModel from "../models/product.model.js";
 import { TProductStatus } from "../types/index.types.js";
 
@@ -72,9 +72,7 @@ export const createCategory = async (
       data: category,
     });
   } catch (error: any) {
-    const err = duplicateError(error, "Category");
-
-    next(err);
+    next(error);
   }
 };
 
@@ -106,8 +104,7 @@ export const updateCategory = async (
       data: updatedCategory,
     });
   } catch (error) {
-    const err = duplicateError(error, "Category");
-    next(err);
+    next(error);
   }
 };
 
