@@ -3,7 +3,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { UserRequest } from "../types/express.js";
 import { categorySlugZodSchema } from "../zodSchemas/category.schema.js";
 import CategoryModel from "../models/category.model.js";
-import AppError, { duplicateError } from "../utils/appError.js";
+import AppError from "../utils/appError.js";
 import ProductModel from "../models/product.model.js";
 import { objectIdSchema } from "../zodSchemas/users.schema.js";
 import {
@@ -177,9 +177,8 @@ export const createProduct = async (
         uploadedImages.map((img) => cloudinary.uploader.destroy(img.public_id)),
       );
     }
-    const err = duplicateError(error, "Product");
 
-    next(err);
+    next(error);
   }
 };
 
@@ -243,8 +242,7 @@ export const updateProduct = async (
         uploadedImages.map((img) => deleteCloudImage(img.public_id)),
       );
     }
-    const err = duplicateError(error, "Product");
-    next(err);
+    next(error);
   }
 };
 
