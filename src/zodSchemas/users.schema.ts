@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import * as z from "zod";
+import { TUserRoles } from "../types/index.types.js";
 
 export const objectIdSchema = z.coerce
   .string()
@@ -26,6 +27,7 @@ export const userZodSchema = z.strictObject({
   email: emailInputSchema,
   password: passwordInputSchema,
   username: usernameInputSchema,
+  role: z.enum(Object.values(TUserRoles)).default(TUserRoles.User),
   phone: z
     .string()
     .trim()
@@ -39,7 +41,7 @@ export const userZodSchema = z.strictObject({
 });
 
 export const updateUserSchema = userZodSchema
-  .omit({ email: true, password: true })
+  .omit({ email: true, password: true, role: true })
   .partial()
   .refine(
     (data) =>

@@ -84,7 +84,6 @@ export const updateUser = async (
     const id = req.user._id;
     const updates = updateUserSchema.parse(req.body);
     const avatarPath = req.file?.path;
-    const allowedFields = ["username", "phone", "address"];
 
     let user = await UserModel.findById(id);
 
@@ -95,9 +94,7 @@ export const updateUser = async (
     const previousAvatar = user.avatar?.public_id;
 
     const userUpdates = Object.fromEntries(
-      Object.entries(updates).filter(
-        ([key, value]) => allowedFields.includes(key) && value != undefined,
-      ),
+      Object.entries(updates).filter(([_, value]) => value != null),
     ) as TUserProfileUpdate;
 
     if (avatarPath) {
