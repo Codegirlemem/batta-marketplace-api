@@ -11,10 +11,13 @@ export const signupZodSchema = userZodSchema
     email: true,
     password: true,
     username: true,
+    role: true,
   })
   .strict();
 
-export const loginZodSchema = userZodSchema.omit({ username: true }).strict();
+export const loginZodSchema = userZodSchema
+  .pick({ email: true, password: true })
+  .strict();
 
 export const userEmailSchema = z.strictObject({
   email: emailInputSchema,
@@ -30,8 +33,10 @@ export const tokenSchema = z.strictObject({
   token: z.string(),
 });
 
-export const acceptInviteSchema = z.strictObject({
-  email: z.email().optional(),
-  password: passwordInputSchema,
-  username: usernameInputSchema,
-});
+export const acceptInviteSchema = userZodSchema
+  .pick({
+    password: true,
+    username: true,
+  })
+  .extend({ email: z.email().optional() })
+  .strict();
