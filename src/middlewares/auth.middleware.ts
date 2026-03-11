@@ -46,9 +46,13 @@ export const isAdmin = (
   res: Response,
   next: NextFunction,
 ) => {
-  if (req.user?.role !== TUserRoles.Admin) {
-    return next(new AppError("Forbidden", 403));
-  }
+  try {
+    if (req.user?.role !== TUserRoles.Admin) {
+      return next(new AppError("Forbidden", 403));
+    }
 
-  next();
+    next();
+  } catch (error) {
+    next();
+  }
 };
